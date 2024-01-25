@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Created by IntelliJ IDEA.
+  User: dimak
+  Date: 1/20/2024
+  Time: 12:51 PM
+-->
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+    <meta http-equiv="pragma" content="no-cache" />
+    <title>Main page</title>
+    <link rel="stylesheet" type="text/css" href="styleForMainPage.css"/><!--<h:outputStylesheet library="css" name="table-style.css"  />-->
+    <script src="https://www.desmos.com/api/v1.8/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0fda6" type="text/javascript"/>
+    <script src="graph.js" type="text/javascript"/>
+    <script src="validation.js" type="text/javascript"/>
+</h:head>
+
+<h:body>
+
+    <div class="header">
+        <div class="name">
+            <p>Комягин Дмитрий Анатольевич, группа Р3232, вариант 666</p>
+        </div>
+    </div>
+
+    <div class="grafic">
+        <div id="calculator" style="width: 600px; height: 400px;" onclick="getCoorOfClick(event)">
+        </div>
+        <script type="application/javascript">
+            var elt = document.getElementById('calculator');
+            var calculator = Desmos.GraphingCalculator(elt);
+        </script>
+
+        <h:panelGrid columns="1">
+            <h:panelGroup>
+                <h:dataTable id="resultTable" border="1" cellpadding="7" cellspacing="0" value="#{areaResultsBean.curDot}" var="o"
+                             styleClass="resultsTable"
+                             style="overflow: auto;"
+                             headerClass="headerOfResultsTable"><!--Понять, что такое var-->
+                    <h:column>
+                        <f:facet name="header">X</f:facet>
+                        #{o.x}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Y</f:facet>
+                        #{o.y}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Радиус</f:facet>
+                        #{o.r}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Текущее время</f:facet>
+                        #{o.currentTime}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Время выполнения</f:facet>
+                        #{o.executionTime}
+                    </h:column>
+                    <h:column>
+                        <f:facet name="header">Результат</f:facet>
+                        #{o.hitType}
+                    </h:column>
+                </h:dataTable>
+            </h:panelGroup>
+
+            <h:panelGroup style="display: flex;
+                        justify-content: center;
+                        align-items: center;">
+                <h:commandButton value="Очистить таблицу" type="button" id="clearTableButton"
+                                 action="${areaResultsBean.clearResult()}" onclick="drawNewGrafic(); clear()">
+                    <f:ajax render = "resultTable"/>
+                </h:commandButton>
+            </h:panelGroup>
+        </h:panelGrid>
+    </div>
+
+    <div class="units_area">
+        <h:form id="myForm" style="height: 100%">
+            <h:panelGrid columns="3" style="width: 100%; height: 100%;">
+                    <h:panelGroup id="X_place">
+                        <fieldset>
+                            <legend>Выберите координату X:</legend>
+                            <h:panelGrid columns="9" width="100%">
+                                <h:commandButton value="-"
+                                               action="#{areaResultsBean.dotsCollectionBean
+                                               .setX(areaResultsBean.dotsCollectionBean.x - 1)}">
+                                    <f:ajax  execute = "x" render = "x"/>
+                                </h:commandButton>
+                                <h:outputText id="x" value="#{areaResultsBean.dotsCollectionBean.x}"/>
+                                <h:commandButton styleClass="increase-x" value="+"
+                                                 action="#{areaResultsBean.dotsCollectionBean
+                                                 .setX(areaResultsBean.dotsCollectionBean.x + 1)}">
+                                    <f:ajax  execute = "x" render = "x"/>
+                                </h:commandButton>
+                            </h:panelGrid>
+                        </fieldset>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="Y_place">
+                        <fieldset style="display: flex;
+                                         align-items: center;">
+                            <legend>Выберите координату Y:</legend>
+                            <h:inputText id="y-input" a:placeholder="Enter value from -3...5"
+                                         value="#{dotsCollection.y}" maxlength="15" onfocus="this.value=''">
+                                <f:converter converterId="customDoubleConverter"/>
+                                <f:validator validatorId="validatorY"/>
+                            </h:inputText>
+                            <h:message for="y-input" style="color: #e84545" rendered="true" showDetail="true"
+                                       id="y-error-field"/>
+                        </fieldset>
+                    </h:panelGroup>
+
+                    <h:panelGroup id="R_place">
+                        <fieldset>
+                            <legend>Выберите значение R:</legend>
+                            <h:panelGroup>
+                                <h:selectOneRadio onchange="setR(this.value); drawNewGrafic(); recountR(this.value)" value="#{dotsCollection.r}" id="r" validator="validatorR"
+                                                  converter="customDoubleConverter">
+                                    <f:selectItem itemValue="1" itemLabel="1.0"/>
+                                    <f:selectItem itemValue="1.5" itemLabel="1.5"/>
+                                    <f:selectItem itemValue="2" itemLabel="2.0"/>
+                                    <f:selectItem itemValue="2.5" itemLabel="2.5"/>
+                                    <f:selectItem itemValue="3" itemLabel="3.0"/>
+                                </h:selectOneRadio>
+                                <h:message for="r" showDetail="true" styleClass="error" id="r-error-field"/>
+                            </h:panelGroup>
+                        </fieldset>
+                    </h:panelGroup>
+                <h:panelGroup style="display: flex; justify-content: center">
+                    <p:button value="Перейти на страницу с часами" outcome="clockPage"/>
+                </h:panelGroup>
+                <h:panelGroup style="display: flex; justify-content: center">
+                    <p:commandButton id="sub" value="Отправить" action="${areaResultsBean.addNewResult()}" onclick="drawDot()" update="resultTable"/>
+                </h:panelGroup>
+            </h:panelGrid>
+        </h:form>
+        <h:form id="graphSelect">
+            <p:growl showDetail="true" id="graph-x-error" life="2000"/>
+            <h:inputHidden id="graph-x" value="#{dotsCollection.x}">
+                <f:validator validatorId="validatorX"/>
+            </h:inputHidden>
+            <h:inputHidden id="graph-y" value="#{dotsCollection.y}">
+                <f:validator validatorId="validatorY"/>
+            </h:inputHidden>
+            <h:inputHidden id="graph-r" value="#{dotsCollection.r}">
+                <f:validator validatorId="validatorR"/>
+            </h:inputHidden>
+            <p:remoteCommand name="updateBeanValues" action="#{areaResultsBean.addNewResult()}"
+                             update="resultTable graph-x-error"/>
+        </h:form>
+    </div>
+</h:body>
+</html>

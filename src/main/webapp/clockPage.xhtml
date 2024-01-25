@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Created by IntelliJ IDEA.
+  User: dimak
+  Date: 1/21/2024
+  Time: 2:01 PM
+-->
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui" xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+    <title>Clock Page</title>
+    <meta http-equiv="pragma" content="no-cache" />
+    <link rel="stylesheet" type="text/css" href="clockPageStyle.css"/>
+    <link rel="stylesheet" type="text/css" href="clock.css"/>
+    <script src="clock.js" type="text/javascript"/>
+</h:head>
+
+<h:body onload="onLoad()">
+    <div class="header">
+        <div class="name">
+            <p>Комягин Дмитрий Анатольевич, группа Р3232, вариант 666</p>
+        </div>
+    </div>
+
+    <div class="grafic">
+        <div class="clock">
+            <ul>
+                <li id="hours">00</li>
+                <li class="separator">:</li>
+                <li id="minutes">00</li>
+                <li class="separator">:</li>
+                <li id="seconds">00</li>
+            </ul>
+        </div>
+    </div>
+    <div class="units_area" style="
+                                display: flex;
+                                align-content: center;
+                                justify-content: center;
+                                align-items: center;">
+            <p:button value="Перейти на основную страницу" outcome="index"/>
+    </div>
+</h:body>
+
+</html>
